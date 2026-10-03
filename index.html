@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ur">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UC Top Up Pakistan | Fast & Easy</title>
+<meta name="description" content="PUBG Mobile UC top-up order website in Pakistan. Choose a package and submit your order.">
+<meta name="theme-color" content="#101827">
+<style>
+:root{--bg:#0b1220;--panel:#121e31;--line:#26364f;--text:#f4f7fb;--muted:#aab8ca;--gold:#ffc857;--green:#31c48d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#1c3150 0,transparent 32%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:20px 6%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}.brand{font-weight:900;font-size:22px}.brand span{color:var(--gold)}.pill{border:1px solid #36506f;border-radius:99px;padding:8px 13px;color:var(--muted);font-size:13px}
+main{max-width:1050px;margin:auto;padding:42px 20px}.hero{text-align:center;padding:25px 0 35px}.tag{color:var(--gold);font-weight:700;letter-spacing:1px}.hero h1{font-size:clamp(32px,6vw,56px);margin:12px 0}.hero p{color:var(--muted);max-width:620px;margin:auto;line-height:1.7}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin:26px 0}.card,.order,.help{background:linear-gradient(145deg,#17263c,#101a2b);border:1px solid var(--line);border-radius:18px;padding:20px}.card h3{margin:0 0 7px}.price{font-size:25px;font-weight:850;color:var(--gold)}.old{color:#8292a8;text-decoration:line-through;font-size:13px;margin-left:7px}.save{color:var(--green);font-size:13px}.card button,button{border:0;background:var(--gold);color:#172033;font-weight:800;padding:12px 16px;border-radius:10px;cursor:pointer}.card button{width:100%;margin-top:14px}.order{max-width:700px;margin:35px auto}.order h2{margin-top:0}label{display:block;color:var(--muted);font-size:14px;margin:13px 0 6px}input,select,textarea{width:100%;padding:13px;border-radius:10px;border:1px solid var(--line);background:#0c1626;color:white;font:inherit}small,.muted{color:var(--muted);line-height:1.6}.notice{padding:14px;border-radius:12px;background:#202c3d;border:1px solid #3b4b60;margin:15px 0}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}.secondary{background:#26364f;color:white}footer{text-align:center;color:#8494a9;padding:30px;border-top:1px solid var(--line);font-size:13px}.chat{position:fixed;right:18px;bottom:18px;background:#1b9b72;color:white;border-radius:50px;padding:13px 18px;font-weight:800;box-shadow:0 8px 30px #0008}.hidden{display:none}
+</style>
+</head>
+<body>
+<header><div class="brand">UC <span>TOP UP</span></div><div class="pill">Pakistan • Easypaisa</div></header>
+<main>
+<section class="hero"><div class="tag">FAST • SIMPLE • SECURE ORDERING</div><h1>PUBG UC Top Up</h1><p>Apna UC package select karein, Player ID enter karein aur order details tayyar karein. Payment verify hone ke baad hi delivery process hogi.</p></section>
+<section><h2>UC Packages</h2><p class="muted">Neeche demo packages hain. Apni asal prices aur UC quantities code mein update karein.</p>
+<div class="grid" id="packages"></div></section>
+<section class="order" id="order"><h2>Order details</h2>
+<label>Selected package</label><input id="selected" readonly placeholder="Package select karein">
+<label>PUBG Player ID</label><input id="player" placeholder="Apni Player ID likhein">
+<label>Customer name</label><input id="customer" placeholder="Aap ka naam">
+<label>Contact number</label><input id="phone" placeholder="03XXXXXXXXX">
+<div class="notice"><b>Easypaisa payment</b><br>Account title: Maryam Shahzadi<br>Account number: 03287004394<br><small>Payment karne ke baad transaction ID neeche likhein. Public website par payment number dikhane se pehle account holder ki permission zaroor confirm karein.</small></div>
+<label>Easypaisa transaction ID</label><input id="txn" placeholder="Transaction ID">
+<label>Additional note (optional)</label><textarea id="note" rows="2" placeholder="Koi extra maloomat"></textarea>
+<div class="actions"><button onclick="makeOrder()">Order summary banayein</button><button class="secondary" onclick="copyOrder()">Summary copy karein</button></div>
+<div class="notice hidden" id="summary"></div>
+</section>
+<section class="help"><h2>AI Customer Help</h2><p class="muted">Yeh abhi demo help assistant hai—common sawalat ke jawab deta hai. Real AI chat ke liye secure server aur AI API key connect karni hogi.</p>
+<label>Apna sawal likhein</label><input id="question" placeholder="Misal: UC kab milega?">
+<div class="actions"><button onclick="askHelp()">Jawab dekhein</button></div><p id="answer" class="muted"></p></section>
+</main>
+<footer>© <span id="year"></span> UC Top Up Pakistan. PUBG is a trademark of its respective owner. This is an independent top-up storefront.</footer>
+<script>
+const packages=[
+ {name:"Small Deal",uc:"60 UC (demo)",price:250,discount:50},
+ {name:"Medium Deal",uc:"325 UC (demo)",price:850,discount:50},
+ {name:"Large Deal",uc:"660 UC (demo)",price:1600,discount:100},
+ {name:"Mega Deal",uc:"1800 UC (demo)",price:3900,discount:100}
+];
+let current=null,lastSummary="";
+document.getElementById('year').textContent=new Date().getFullYear();
+const money=n=>"Rs. "+n.toLocaleString("en-PK");
+document.getElementById('packages').innerHTML=packages.map((p,i)=>`<article class="card"><h3>${p.name}</h3><p class="muted">${p.uc}</p><div class="price">${money(p.price-p.discount)} <span class="old">${money(p.price)}</span></div><div class="save">You save ${money(p.discount)}</div><button onclick="choose(${i})">Select package</button></article>`).join("");
+function choose(i){current=packages[i];document.getElementById('selected').value=current.name+" — "+current.uc+" — "+money(current.price-current.discount);document.getElementById('order').scrollIntoView({behavior:'smooth'});}
+function makeOrder(){
+ if(!current){alert("Pehle package select karein.");return}
+ const id=document.getElementById('player').value.trim(),name=document.getElementById('customer').value.trim(),phone=document.getElementById('phone').value.trim(),txn=document.getElementById('txn').value.trim();
+ if(!id||!name||!phone||!txn){alert("Player ID, naam, contact number aur transaction ID fill karein.");return}
+ lastSummary=`UC TOP UP ORDER\nPackage: ${current.name} (${current.uc})\nAmount: ${money(current.price-current.discount)}\nPlayer ID: ${id}\nCustomer: ${name}\nContact: ${phone}\nEasypaisa transaction ID: ${txn}\nNote: ${document.getElementById('note').value}`;
+ const el=document.getElementById('summary');el.textContent=lastSummary;el.classList.remove('hidden');
+}
+async function copyOrder(){if(!lastSummary){makeOrder();if(!lastSummary)return}try{await navigator.clipboard.writeText(lastSummary);alert("Order summary copy ho gaya.");}catch(e){alert(lastSummary)}}
+function askHelp(){const q=document.getElementById('question').value.toLowerCase();let a="Order summary aur Easypaisa transaction ID tayyar rakhein. Payment verify hone ke baad seller delivery confirm karega.";if(q.includes("time")||q.includes("kab")||q.includes("delivery"))a="Delivery ka waqt payment verification aur supplier system par depend karta hai. Is demo site mein automatic delivery enabled nahi hai.";else if(q.includes("refund")||q.includes("wapas"))a="Refund policy seller se confirm karein. Payment dispute ki surat mein transaction receipt sambhal kar rakhein.";else if(q.includes("id")||q.includes("player"))a="PUBG profile se apni sahi Player ID copy karein. Ghalat ID par top-up ka masla ho sakta hai.";document.getElementById('answer').textContent=a;}
+</script>
+</body></html>
